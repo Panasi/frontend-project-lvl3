@@ -1,0 +1,49 @@
+{
+  "name": "@hexlet/code",
+  "version": "0.0.1",
+  "description": "frontend-project-lvl3",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest --bail",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Panasi/frontend-project-lvl3.git"
+  },
+  "keywords": [
+    "project3"
+  ],
+  "author": "Oleksandr Panasiuk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Panasi/frontend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/Panasi/frontend-project-lvl3#readme",
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
+    "@popperjs/core": "^2.11.0",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.5.1",
+    "eslint": "^8.3.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.3.0",
+    "html-webpack-plugin": "^5.5.0",
+    "jest": "^27.3.1",
+    "postcss-loader": "^6.2.1",
+    "sass": "^1.44.0",
+    "sass-loader": "^12.3.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.64.3",
+    "webpack-cli": "^4.9.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
+  },
+  "dependencies": {
+    "bootstrap": "^5.1.3"
+  }
+}

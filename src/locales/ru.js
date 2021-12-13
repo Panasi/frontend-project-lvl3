@@ -3,8 +3,11 @@ export default {
     translation: {
       feedbackMessages: {
         success: 'RSS успешно загружен',
-        exists: 'RSS уже существует',
+        alreadyAdded: 'RSS уже существует',
         invalidLink: 'Ссылка должна быть валидным URL',
+        notExists: 'Страница не найдена',
+        notRSS: 'Ресурс не содержит валидный RSS',
+        networkError: 'Ошибка сети',
       },
     },
   },

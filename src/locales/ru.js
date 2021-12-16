@@ -9,6 +9,9 @@ export default {
         notRSS: 'Ресурс не содержит валидный RSS',
         networkError: 'Ошибка сети',
       },
+      posts: 'Посты',
+      feeds: 'Фиды',
+      viewing: 'Просмотр',
     },
   },
 };

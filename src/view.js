@@ -19,10 +19,10 @@ const renderCardBody = (text) => {
 export default (state, elements, i18n) => onChange(state, (path, value) => {
   if (path === 'formStatus') {
     if (value === 'sending') {
-      elements.input.readonly = true;
+      elements.input.setAttribute('readonly', 'readonly');
       elements.sendButton.disabled = true;
     } else {
-      elements.input.readonly = false;
+      elements.input.removeAttribute('readonly', 'readonly');
       elements.sendButton.disabled = false;
     }
   }

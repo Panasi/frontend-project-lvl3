@@ -1,4 +1,5 @@
 import './styles.scss';
+import 'bootstrap/js/dist/modal';
 import * as yup from 'yup';
 import i18n from 'i18next';
 import axios from 'axios';
@@ -9,17 +10,19 @@ const schema = yup.string().url();
 
 const form = document.querySelector('.rss-form');
 const input = document.querySelector('#url-input');
+const posts = document.querySelector('.posts');
 
 const state = {
   inputStatus: null,
   feedbackMessage: null,
-  stage: null,
+  currentId: 1,
   uploadedFeeds: [],
   posts: [],
   feeds: [],
+  viewedPostsIds: [],
+  previewPostId: null,
 };
 const i18nextInstance = i18n.createInstance();
-let postIdCounter = 1;
 
 const checkDouble = (url, watched) => {
   if (watched.uploadedFeeds.includes(url)) {
@@ -60,13 +63,13 @@ const parseRSS = (rss) => {
   }
 };
 
-const buildStackOfPosts = (posts) => {
-  const stackOfPosts = posts.map((item) => {
+const buildStackOfPosts = (watched, array) => {
+  const stackOfPosts = array.map((item) => {
     const title = item.querySelector('title').textContent;
     const link = item.querySelector('link').textContent;
     const description = item.querySelector('description').textContent;
-    const id = postIdCounter;
-    postIdCounter += 1;
+    const id = watched.currentId;
+    watched.currentId += 1;
     return {
       title,
       link,
@@ -77,18 +80,16 @@ const buildStackOfPosts = (posts) => {
   return stackOfPosts;
 };
 
-const addFeeds = (dom, watched, url) => {
-  watched.stage = 'filling';
-  const posts = dom.querySelectorAll('item');
-  const arrayOfPosts = Array.from(posts);
-  const stackOfPosts = buildStackOfPosts(arrayOfPosts);
+const addRSS = (dom, watched, url) => {
+  const allPosts = dom.querySelectorAll('item');
+  const arrayOfPosts = Array.from(allPosts);
+  const stackOfPosts = buildStackOfPosts(watched, arrayOfPosts);
   watched.posts = [...stackOfPosts, ...watched.posts];
   const feedsTitle = dom.querySelector('title').textContent;
   const feedsDescription = dom.querySelector('description').textContent;
   const feed = { feedsTitle, feedsDescription };
   watched.feeds = [feed, ...watched.feeds];
   watched.uploadedFeeds.push(url);
-  watched.stage = 'filled';
   watched.feedbackMessage = 'success';
 };
 
@@ -101,10 +102,8 @@ const updatePosts = (dom, watched) => {
     return !uploadedPostsTitles.includes(postTitle);
   });
   if (newPosts.length > 0) {
-    watched.stage = 'filling';
-    const stackOfPosts = buildStackOfPosts(newPosts);
+    const stackOfPosts = buildStackOfPosts(watched, newPosts);
     watched.posts = [...stackOfPosts, ...watched.posts];
-    watched.stage = 'filled';
   }
 };
 
@@ -125,7 +124,7 @@ const loadRSS = (link, watched) => schema.validate(link)
   .then((proxy) => axios.get(proxy))
   .then((response) => checkURL(response))
   .then((rssData) => parseRSS(rssData))
-  .then((htmlData) => addFeeds(htmlData, watched, link))
+  .then((htmlData) => addRSS(htmlData, watched, link))
   .then(() => setTimeout(() => updateRSS(watched, link), 5000))
   .catch((error) => {
     if (error.type === 'url') {
@@ -149,6 +148,7 @@ const loadRSS = (link, watched) => schema.validate(link)
     }
     if (error.type === undefined) {
       watched.feedbackMessage = 'networkError';
+      console.log(error);
     }
   });
 
@@ -161,8 +161,19 @@ i18nextInstance.init({
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     watchedState.inputStatus = 'valid';
-    watchedState.feedbackMessage = '';
+    watchedState.feedbackMessage = 'empty';
     const inputValue = input.value;
     loadRSS(inputValue, watchedState);
+  });
+  posts.addEventListener('click', (event) => {
+    if (event.target.className === 'btn btn-outline-primary btn-sm') {
+      const eventButtonId = Number(event.target.getAttribute('data-id'));
+      watchedState.previewPostId = eventButtonId;
+      watchedState.viewedPostsIds.push(eventButtonId);
+    }
+    if (event.target.tagName === 'A') {
+      const eventButtonId = Number(event.target.getAttribute('data-id'));
+      watchedState.viewedPostsIds.push(eventButtonId);
+    }
   });
 });

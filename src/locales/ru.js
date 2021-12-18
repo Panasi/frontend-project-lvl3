@@ -3,6 +3,7 @@ export default {
     translation: {
       feedbackMessages: {
         success: 'RSS успешно загружен',
+        empty: '',
         alreadyAdded: 'RSS уже существует',
         invalidLink: 'Ссылка должна быть валидным URL',
         notExists: 'Страница не найдена',
@@ -12,6 +13,10 @@ export default {
       posts: 'Посты',
       feeds: 'Фиды',
       viewing: 'Просмотр',
+      modal: {
+        read: 'Читать полностью ',
+        close: 'Закрыть',
+      },
     },
   },
 };

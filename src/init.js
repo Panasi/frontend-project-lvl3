@@ -7,14 +7,6 @@ import resources from './locales/ru.js';
 
 const schema = yup.string().url();
 
-const checkDouble = (url, watched) => {
-  if (watched.uploadedFeeds.includes(url)) {
-    const error = new Error('RSS already exists');
-    error.type = 'alreadyAdded';
-    throw error;
-  }
-};
-
 const getProxy = (url) => {
   const proxyURL = new URL('https://hexlet-allorigins.herokuapp.com/get?');
   proxyURL.searchParams.set('disableCache', 'true');

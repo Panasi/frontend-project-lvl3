@@ -17,15 +17,15 @@ const renderCardBody = (text) => {
 };
 
 export default (state, elements, i18n) => onChange(state, (path, value) => {
-//  if (path === 'formStatus') {
-//    if (value === 'sending') {
-//      elements.input.readonly = true;
-//      elements.sendButton.disabled = true;
-//    } else {
-//      elements.input.readonly = false;
-//      elements.sendButton.disabled = false;
-//    }
-//  }
+  if (path === 'formStatus') {
+    if (value === 'sending') {
+      elements.input.readonly = true;
+      elements.sendButton.disabled = true;
+    } else {
+      elements.input.readonly = false;
+      elements.sendButton.disabled = false;
+    }
+  }
   if (path === 'inputStatus') {
     if (value === 'invalid') {
       elements.input.classList.add('is-invalid');

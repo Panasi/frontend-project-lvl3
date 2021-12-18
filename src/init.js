@@ -95,7 +95,11 @@ const updateRSS = (watched, url) => {
 };
 
 const loadRSS = (link, watched) => schema.validate(link)
-  .then(() => watchedState.formStatus = 'sending')
+  .then(() => {
+    watched.formStatus = 'sending';
+    watched.inputStatus = 'valid';
+    watched.feedbackMessage = 'empty';
+  })
   .then(() => getProxy(link))
   .then((proxy) => axios.get(proxy))
   .then((response) => checkURL(response))
@@ -165,8 +169,6 @@ const init = () => {
         watchedState.feedbackMessage = 'alreadyAdded';
         return;
       }
-      watchedState.inputStatus = 'valid';
-      watchedState.feedbackMessage = 'empty';
       loadRSS(inputValue, watchedState)
         .then(() => {
           watchedState.formStatus = 'sended';

@@ -1,10 +1,9 @@
 {
   "name": "@hexlet/code",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "frontend-project-lvl3",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest --bail",
     "build": "webpack"
   },
   "repository": {

@@ -1,18 +1,9 @@
 import onChange from 'on-change';
 
-const input = document.querySelector('#url-input');
-const feedback = document.querySelector('.feedback');
-const posts = document.querySelector('.posts');
-const feeds = document.querySelector('.feeds');
-const modalTitle = document.querySelector('.modal-title');
-const modalBody = document.querySelector('.modal-body');
-const modalRead = document.querySelector('.modal-footer .full-article');
-const modalClose = document.querySelector('.modal-footer [data-bs-dismiss]');
-
-const renderFeedbackMessage = (remove, add, message) => {
-  feedback.classList.remove(remove);
-  feedback.classList.add(add);
-  feedback.textContent = message;
+const renderFeedbackMessage = (elements, remove, add, message) => {
+  elements.feedback.classList.remove(remove);
+  elements.feedback.classList.add(add);
+  elements.feedback.textContent = message;
 };
 
 const renderCardBody = (text) => {
@@ -25,45 +16,45 @@ const renderCardBody = (text) => {
   return cardBody;
 };
 
-export default (state, i18n) => onChange(state, (path, value) => {
+export default (state, elements, i18n) => onChange(state, (path, value) => {
   if (path === 'inputStatus') {
     if (value === 'invalid') {
-      input.classList.add('is-invalid');
+      elements.input.classList.add('is-invalid');
     } else {
-      input.classList.remove('is-invalid');
+      elements.input.classList.remove('is-invalid');
     }
   }
   if (path === 'feedbackMessage') {
     if (value === 'success') {
-      renderFeedbackMessage('text-danger', 'text-success', i18n.t('feedbackMessages.success'));
+      renderFeedbackMessage(elements, 'text-danger', 'text-success', i18n.t('feedbackMessages.success'));
       return;
     }
     if (value === 'empty') {
-      renderFeedbackMessage('text-danger', 'text-success', i18n.t('feedbackMessages.empty'));
+      renderFeedbackMessage(elements, 'text-danger', 'text-success', i18n.t('feedbackMessages.empty'));
       return;
     }
     if (value === 'alreadyAdded') {
-      renderFeedbackMessage('text-success', 'text-danger', i18n.t('feedbackMessages.alreadyAdded'));
+      renderFeedbackMessage(elements, 'text-success', 'text-danger', i18n.t('feedbackMessages.alreadyAdded'));
       return;
     }
     if (value === 'invalidLink') {
-      renderFeedbackMessage('text-success', 'text-danger', i18n.t('feedbackMessages.invalidLink'));
+      renderFeedbackMessage(elements, 'text-success', 'text-danger', i18n.t('feedbackMessages.invalidLink'));
       return;
     }
     if (value === 'notExists') {
-      renderFeedbackMessage('text-success', 'text-danger', i18n.t('feedbackMessages.notExists'));
+      renderFeedbackMessage(elements, 'text-success', 'text-danger', i18n.t('feedbackMessages.notExists'));
       return;
     }
     if (value === 'notRSS') {
-      renderFeedbackMessage('text-success', 'text-danger', i18n.t('feedbackMessages.notRSS'));
+      renderFeedbackMessage(elements, 'text-success', 'text-danger', i18n.t('feedbackMessages.notRSS'));
       return;
     }
     if (value === 'networkError') {
-      renderFeedbackMessage('text-success', 'text-danger', i18n.t('feedbackMessages.networkError'));
+      renderFeedbackMessage(elements, 'text-success', 'text-danger', i18n.t('feedbackMessages.networkError'));
     }
   }
   if (path === 'posts' || path === 'viewedPostsIds') {
-    posts.textContent = '';
+    elements.posts.textContent = '';
     const postsCard = document.createElement('div');
     postsCard.classList.add('card', 'border-0');
     const postsCardBody = renderCardBody(i18n.t('posts'));
@@ -97,10 +88,10 @@ export default (state, i18n) => onChange(state, (path, value) => {
       postsListGroup.append(listItem);
     });
     postsCard.append(postsListGroup);
-    posts.append(postsCard);
+    elements.posts.append(postsCard);
   }
   if (path === 'feeds') {
-    feeds.textContent = '';
+    elements.feeds.textContent = '';
     const feedsCard = document.createElement('div');
     feedsCard.classList.add('card', 'border-0');
     const feedsCardBody = renderCardBody(i18n.t('feeds'));
@@ -121,16 +112,16 @@ export default (state, i18n) => onChange(state, (path, value) => {
       feedsListGroup.append(listItem);
     });
     feedsCard.append(feedsListGroup);
-    feeds.append(feedsCard);
-    input.value = '';
-    input.focus();
+    elements.feeds.append(feedsCard);
+    elements.input.value = '';
+    elements.input.focus();
   }
   if (path === 'previewPostId') {
     const [linkedPost] = state.posts.filter((post) => post.id === value);
-    modalBody.textContent = linkedPost.description;
-    modalTitle.textContent = linkedPost.title;
-    modalClose.textContent = i18n.t('modal.close');
-    modalRead.textContent = i18n.t('modal.read');
-    modalRead.href = linkedPost.link;
+    elements.modalBody.textContent = linkedPost.description;
+    elements.modalTitle.textContent = linkedPost.title;
+    elements.modalClose.textContent = i18n.t('modal.close');
+    elements.modalRead.textContent = i18n.t('modal.read');
+    elements.modalRead.href = linkedPost.link;
   }
 });

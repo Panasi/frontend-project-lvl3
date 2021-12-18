@@ -103,7 +103,6 @@ const updateRSS = (watched, url) => {
 };
 
 const loadRSS = (link, watched) => schema.validate(link)
-  .then(() => checkDouble(link, watched))
   .then(() => getProxy(link))
   .then((proxy) => axios.get(proxy))
   .then((response) => checkURL(response))
@@ -114,11 +113,6 @@ const loadRSS = (link, watched) => schema.validate(link)
     if (error.type === 'url') {
       watched.inputStatus = 'invalid';
       watched.feedbackMessage = 'invalidLink';
-      return;
-    }
-    if (error.type === 'alreadyAdded') {
-      watched.inputStatus = 'invalid';
-      watched.feedbackMessage = 'alreadyAdded';
       return;
     }
     if (error.type === 'notExists') {
@@ -172,11 +166,19 @@ const init = () => {
     const watchedState = watcher(state, elements, i18nextInstance);
     elements.form.addEventListener('submit', (event) => {
       event.preventDefault();
+      const inputValue = elements.input.value;
+      if (watchedState.uploadedFeeds.includes(inputValue)) {
+        watchedState.inputStatus = 'invalid';
+        watchedState.feedbackMessage = 'alreadyAdded';
+        return;
+      }
       watchedState.formStatus = 'sending';
       watchedState.inputStatus = 'valid';
       watchedState.feedbackMessage = 'empty';
-      const inputValue = elements.input.value;
-      loadRSS(inputValue, watchedState);
+      loadRSS(inputValue, watchedState)
+        .then(() => {
+          watchedState.formStatus = 'sended';
+        });
     });
     elements.posts.addEventListener('click', (event) => {
       if (event.target.className === 'btn btn-outline-primary btn-sm') {

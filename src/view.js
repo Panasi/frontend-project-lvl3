@@ -6,7 +6,7 @@ const renderFeedbackMessage = (elements, remove, add, message) => {
   elements.feedback.textContent = message;
 };
 
-const renderCardBody = (text) => {
+const buildCardBody = (text) => {
   const cardBody = document.createElement('div');
   cardBody.classList.add('card-body');
   const cardTitle = document.createElement('h2');
@@ -66,7 +66,7 @@ export default (state, elements, i18n) => onChange(state, (path, value) => {
     elements.posts.textContent = '';
     const postsCard = document.createElement('div');
     postsCard.classList.add('card', 'border-0');
-    const postsCardBody = renderCardBody(i18n.t('posts'));
+    const postsCardBody = buildCardBody(i18n.t('posts'));
     postsCard.append(postsCardBody);
     const postsListGroup = document.createElement('ul');
     postsListGroup.classList.add('list-group', 'border-0', 'rounded-0');
@@ -103,7 +103,7 @@ export default (state, elements, i18n) => onChange(state, (path, value) => {
     elements.feeds.textContent = '';
     const feedsCard = document.createElement('div');
     feedsCard.classList.add('card', 'border-0');
-    const feedsCardBody = renderCardBody(i18n.t('feeds'));
+    const feedsCardBody = buildCardBody(i18n.t('feeds'));
     feedsCard.append(feedsCardBody);
     const feedsListGroup = document.createElement('ul');
     feedsListGroup.classList.add('list-group', 'border-0', 'rounded-0');

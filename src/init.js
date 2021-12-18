@@ -137,6 +137,7 @@ const loadRSS = (link, watched) => schema.validate(link)
 
 const init = () => {
   const state = {
+    formStatus: null,
     inputStatus: null,
     feedbackMessage: null,
     currentId: 1,
@@ -150,6 +151,7 @@ const init = () => {
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.querySelector('#url-input'),
+    sendButton: document.querySelector('.rss-form button'),
     feedback: document.querySelector('.feedback'),
     posts: document.querySelector('.posts'),
     feeds: document.querySelector('.feeds'),
@@ -169,10 +171,14 @@ const init = () => {
     const watchedState = watcher(state, elements, i18nextInstance);
     elements.form.addEventListener('submit', (event) => {
       event.preventDefault();
+      watchedState.formStatus = 'sending';
       watchedState.inputStatus = 'valid';
       watchedState.feedbackMessage = 'empty';
       const inputValue = elements.input.value;
-      loadRSS(inputValue, watchedState);
+      loadRSS(inputValue, watchedState)
+        .then(() => {
+          watchedState.formStatus = 'sended';
+        });
     });
     elements.posts.addEventListener('click', (event) => {
       if (event.target.className === 'btn btn-outline-primary btn-sm') {

@@ -164,23 +164,19 @@ const init = () => {
 
   const i18nextInstance = i18n.createInstance();
 
-  const watchedState = watcher(state, elements, i18nextInstance);
-
   i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
   }).then(() => {
+    const watchedState = watcher(state, elements, i18nextInstance);
     elements.form.addEventListener('submit', (event) => {
       event.preventDefault();
       watchedState.formStatus = 'sending';
       watchedState.inputStatus = 'valid';
       watchedState.feedbackMessage = 'empty';
       const inputValue = elements.input.value;
-      loadRSS(inputValue, watchedState)
-        .then(() => {
-          watchedState.formStatus = 'sended';
-        });
+      loadRSS(inputValue, watchedState);
     });
     elements.posts.addEventListener('click', (event) => {
       if (event.target.className === 'btn btn-outline-primary btn-sm') {

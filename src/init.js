@@ -97,7 +97,6 @@ const updateRSS = (watched, url) => {
 
 const loadRSS = (link, watched) => schema.validate(link)
   .then(() => {
-    watched.formStatus = 'sending';
     watched.inputStatus = 'valid';
     watched.feedbackMessage = 'empty';
   })
@@ -174,6 +173,7 @@ const init = () => {
         watchedState.feedbackMessage = 'alreadyAdded';
         return;
       }
+      watchedState.formStatus = 'sending';
       loadRSS(inputValue, watchedState);
     });
     elements.posts.addEventListener('click', (event) => {

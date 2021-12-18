@@ -98,6 +98,7 @@ const updateRSS = (watched, url) => {
     .then(() => setTimeout(() => updateRSS(watched, url), 5000))
     .catch((error) => {
       console.log(error);
+      setTimeout(() => updateRSS(watched, url), 5000);
     });
 };
 
@@ -163,12 +164,13 @@ const init = () => {
 
   const i18nextInstance = i18n.createInstance();
 
+  const watchedState = watcher(state, elements, i18nextInstance);
+
   i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
   }).then(() => {
-    const watchedState = watcher(state, elements, i18nextInstance);
     elements.form.addEventListener('submit', (event) => {
       event.preventDefault();
       watchedState.formStatus = 'sending';

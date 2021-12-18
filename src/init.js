@@ -66,6 +66,7 @@ const addRSS = (dom, watched, url) => {
   watched.feeds = [feed, ...watched.feeds];
   watched.uploadedFeeds.push(url);
   watched.feedbackMessage = 'success';
+  watched.formStatus = 'sended';
 };
 
 const updatePosts = (dom, watched) => {
@@ -110,19 +111,23 @@ const loadRSS = (link, watched) => schema.validate(link)
     if (error.type === 'url') {
       watched.inputStatus = 'invalid';
       watched.feedbackMessage = 'invalidLink';
+      watched.formStatus = 'sended';
       return;
     }
     if (error.type === 'notExists') {
       watched.inputStatus = 'invalid';
       watched.feedbackMessage = 'notExists';
+      watched.formStatus = 'sended';
       return;
     }
     if (error.type === 'notRSS') {
       watched.feedbackMessage = 'notRSS';
+      watched.formStatus = 'sended';
       return;
     }
     if (error.type === undefined) {
       watched.feedbackMessage = 'networkError';
+      watched.formStatus = 'sended';
       console.log(error);
     }
   });
@@ -169,10 +174,7 @@ const init = () => {
         watchedState.feedbackMessage = 'alreadyAdded';
         return;
       }
-      loadRSS(inputValue, watchedState)
-        .then(() => {
-          watchedState.formStatus = 'sended';
-        });
+      loadRSS(inputValue, watchedState);
     });
     elements.posts.addEventListener('click', (event) => {
       if (event.target.className === 'btn btn-outline-primary btn-sm') {

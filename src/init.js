@@ -8,24 +8,24 @@ import resources from './locales/ru.js';
 const schema = yup.string().url();
 
 const getProxy = (url) => {
-  const proxyURL = new URL('https://hexlet-allorigins.herokuapp.com/get?');
-  proxyURL.searchParams.set('disableCache', 'true');
-  proxyURL.searchParams.set('url', url);
-  return proxyURL.toString();
+  const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?');
+  proxy.searchParams.set('disableCache', 'true');
+  proxy.searchParams.set('url', url);
+  return proxy.toString();
 };
 
-const checkURL = (urlData) => {
-  if (urlData.data.contents === null || urlData.data.contents === '') {
+const checkURL = (xml) => {
+  if (xml.data.contents === null || xml.data.contents === '') {
     const error = new Error('Page not found');
     error.type = 'notExists';
     throw error;
   } else {
-    return urlData;
+    return xml;
   }
 };
 
-const parseRSS = (rss) => {
-  const xmlString = rss.data.contents;
+const parseRSS = (xml) => {
+  const xmlString = xml.data.contents;
   const parser = new DOMParser();
   const documnetData = parser.parseFromString(xmlString, 'application/xml');
   const errorNode = documnetData.querySelector('parsererror');
@@ -66,7 +66,6 @@ const addRSS = (dom, watched, url) => {
   watched.feeds = [feed, ...watched.feeds];
   watched.uploadedFeeds.push(url);
   watched.feedbackMessage = 'success';
-  watched.formStatus = 'sended';
 };
 
 const updatePosts = (dom, watched) => {
@@ -95,42 +94,38 @@ const updateRSS = (watched, url) => {
     });
 };
 
-const loadRSS = (link, watched) => schema.validate(link)
-  .then(() => {
-    watched.formStatus = 'sending';
-    watched.inputStatus = 'valid';
-    watched.feedbackMessage = 'empty';
-  })
-  .then(() => getProxy(link))
-  .then((proxy) => axios.get(proxy))
-  .then((response) => checkURL(response))
-  .then((rssData) => parseRSS(rssData))
-  .then((htmlData) => addRSS(htmlData, watched, link))
-  .then(() => setTimeout(() => updateRSS(watched, link), 5000))
-  .catch((error) => {
-    if (error.type === 'url') {
-      watched.inputStatus = 'invalid';
-      watched.feedbackMessage = 'invalidLink';
-      watched.formStatus = 'sended';
-      return;
-    }
-    if (error.type === 'notExists') {
-      watched.inputStatus = 'invalid';
-      watched.feedbackMessage = 'notExists';
-      watched.formStatus = 'sended';
-      return;
-    }
-    if (error.type === 'notRSS') {
-      watched.feedbackMessage = 'notRSS';
-      watched.formStatus = 'sended';
-      return;
-    }
-    if (error.type === undefined) {
-      watched.feedbackMessage = 'networkError';
-      watched.formStatus = 'sended';
-      console.log(error);
-    }
-  });
+const loadRSS = (link, watched) => {
+  watched.formStatus = 'sending';
+  watched.inputStatus = 'valid';
+  watched.feedbackMessage = 'empty';
+  return schema.validate(link)
+    .then(() => getProxy(link))
+    .then((proxy) => axios.get(proxy))
+    .then((response) => checkURL(response))
+    .then((xmlData) => parseRSS(xmlData))
+    .then((domData) => addRSS(domData, watched, link))
+    .then(() => setTimeout(() => updateRSS(watched, link), 5000))
+    .catch((error) => {
+      if (error.type === 'url') {
+        watched.inputStatus = 'invalid';
+        watched.feedbackMessage = 'invalidLink';
+        return;
+      }
+      if (error.type === 'notExists') {
+        watched.inputStatus = 'invalid';
+        watched.feedbackMessage = 'notExists';
+        return;
+      }
+      if (error.type === 'notRSS') {
+        watched.feedbackMessage = 'notRSS';
+        return;
+      }
+      if (error.type === undefined) {
+        watched.feedbackMessage = 'networkError';
+        console.log(error);
+      }
+    });
+};
 
 const init = () => {
   const state = {
@@ -144,7 +139,6 @@ const init = () => {
     viewedPostsIds: [],
     previewPostId: null,
   };
-
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.querySelector('#url-input'),
@@ -157,16 +151,13 @@ const init = () => {
     modalRead: document.querySelector('.modal-footer .full-article'),
     modalClose: document.querySelector('.modal-footer [data-bs-dismiss]'),
   };
-
   const i18nextInstance = i18n.createInstance();
-
   i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
   }).then(() => {
     const watchedState = watcher(state, elements, i18nextInstance);
-
     elements.form.addEventListener('submit', (event) => {
       event.preventDefault();
       const inputValue = elements.input.value;
@@ -175,7 +166,10 @@ const init = () => {
         watchedState.feedbackMessage = 'alreadyAdded';
         return;
       }
-      loadRSS(inputValue, watchedState);
+      loadRSS(inputValue, watchedState)
+        .then(() => {
+          watchedState.formStatus = 'sent';
+        });
     });
     elements.posts.addEventListener('click', (event) => {
       if (event.target.className === 'btn btn-outline-primary btn-sm') {

@@ -122,7 +122,7 @@ export default (state, elements, i18n) => onChange(state, (path, value) => {
     });
     feedsCard.append(feedsListGroup);
     elements.feeds.append(feedsCard);
-    elements.input.value = '';
+    elements.form.reset();
     elements.input.focus();
   }
   if (path === 'previewPostId') {

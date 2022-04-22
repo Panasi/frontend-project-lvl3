@@ -8,7 +8,7 @@ import resources from './locales/ru.js';
 const schema = yup.string().url();
 
 const getProxy = (url) => {
-  const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?');
+  const proxy = new URL('https://allorigins.hexlet.app/get?');
   proxy.searchParams.set('disableCache', 'true');
   proxy.searchParams.set('url', url);
   return proxy.toString();
